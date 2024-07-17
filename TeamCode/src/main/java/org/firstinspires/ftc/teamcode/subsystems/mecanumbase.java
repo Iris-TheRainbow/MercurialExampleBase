@@ -1,22 +1,23 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import androidx.annotation.NonNull;
-
+import dev.frozenmilk.dairy.core.dependency.Dependency;
+import dev.frozenmilk.dairy.core.dependency.annotation.SingleAnnotation;
+import dev.frozenmilk.mercurial.commands.LambdaCommand;
+import dev.frozenmilk.mercurial.subsystems.SDKSubsystem;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-
-import dev.frozenmilk.dairy.core.dependency.Dependency;
-import dev.frozenmilk.dairy.core.dependency.annotation.SingleAnnotation;
-import dev.frozenmilk.mercurial.commands.LambdaCommand;
-import dev.frozenmilk.mercurial.subsystems.Subsystem;
 import kotlin.annotation.MustBeDocumented;
 
+public class mecanumbase implements SDKSubsystem {
 
-public class mecanumbase implements Subsystem {
+    private dcmotor frontLeft, rearleft, frontRight, rearRight;
+    private Gamepad driveGamepad = Mercurial.gamepad1;
     private static final mecanumbase INSTANCE = new mecanumbase();
+
     public static mecanumbase getInstance() {
         return INSTANCE;
     }
@@ -29,24 +30,26 @@ public class mecanumbase implements Subsystem {
     @Target(ElementType.TYPE)
     @MustBeDocumented
     @Inherited
-    public @interface Attach{}
-    private final Dependency<?> dependency =
-            Subsystem.DEFAULT_DEPENDENCY
-                    .and(new SingleAnnotation<>(Attach.class));
+    public @interface Attach {
+    }
+
+    private final Dependency<?> dependency = Subsystem.DEFAULT_DEPENDENCY.and(
+        new SingleAnnotation<>(Attach.class)
+    );
 
     @NonNull
     @Override
     public Dependency<?> getDependency() {
         return dependency;
     }
+
     @NonNull
     public static LambdaCommand simpleCommand() {
         return new LambdaCommand()
-                .addRequirements(INSTANCE)
-                .setInit(() -> )
-                .setEnd(interrupted -> {
-                    if (!interrupted) getMotor().setPower(0.0);
-                });
+            .addRequirements(INSTANCE)
+            .setInit(() -> {})
+            .setEnd(interrupted -> {
+                if (!interrupted) getMotor().setPower(0.0);
+            });
     }
-
 }
